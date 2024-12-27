@@ -12,17 +12,18 @@ amqp.connect('amqp://localhost', function(error0, connection) {
         }
 
         var queue = 'task_queue';
+        var msg = 'Hello from send script test1';
+        var message = JSON.stringify(msg)
 
         channel.assertQueue(queue, {
             durable: true
         });
+        channel.sendToQueue(queue, Buffer.from(message));
 
-        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
-
-        channel.consume(queue, function(msg) {
-            console.log(" [x] Received %s", msg.content.toString());
-        }, {
-            noAck: true
-        });
+        console.log(" [x] Sent %s", msg.toString());
     });
+    setTimeout(function() {
+        connection.close();
+        process.exit(0);
+    }, 500);
 });

@@ -8,22 +8,22 @@ const sse = new SSE();
 
 const connectToRabbitMQ = async () => {
   try {
-    const connection = await amqp.connect('amqp://localhost'); 
+    const connection = await amqp.connect('amqp://localhost');
     const channel = await connection.createChannel();
 
-    const queue = 'task_queue'; 
-    await channel.assertQueue(queue, { durable: true }); 
+    const queue = 'task_queue';
+    await channel.assertQueue(queue, { durable: true });
 
     channel.consume(queue, (msg) => {
       try {
         const message = JSON.parse(msg.content.toString());
-        sse.send(message); 
+        sse.send(message);
       } catch (error) {
         console.error("Error parsing message:", error);
       }
-      channel.ack(msg); 
+      channel.ack(msg);
     }, {
-      noAck: false 
+      noAck: false
     });
   } catch (error) {
     console.error("Error connecting to RabbitMQ:", error);
@@ -33,9 +33,9 @@ const connectToRabbitMQ = async () => {
 connectToRabbitMQ();
 
 app.get('/events', (req, res) => {
+  //getting res.flush is not a function in express-sse https://github.com/dpskvn/express-sse/issues/28 
   res.flush = function () { /* Do nothing */ }
-  res.flush = function () { /* Do nothing */ }
-  sse.init(req, res); 
+  sse.init(req, res);
 });
 
 app.listen(3000, () => {

@@ -12,17 +12,17 @@ amqp.connect('amqp://localhost', function(error0, connection) {
         }
 
         var queue = 'task_queue';
-        var msg = 'Hello from Rabbitq! test1';
 
         channel.assertQueue(queue, {
-            durable: false
+            durable: true
         });
-        channel.sendToQueue(queue, Buffer.from(msg));
 
-        console.log(" [x] Sent %s", msg);
+        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
+
+        channel.consume(queue, function(msg) {
+            console.log(" [x] Received %s", msg.content.toString());
+        }, {
+            noAck: true
+        });
     });
-    setTimeout(function() {
-        connection.close();
-        process.exit(0);
-    }, 500);
 });

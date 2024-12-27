@@ -13,13 +13,14 @@ amqp.connect('amqp://localhost', function(error0, connection) {
 
         var queue = 'task_queue';
         var msg = 'Hello from Rabbitq! test1';
+        var message = JSON.stringify(msg)
 
         channel.assertQueue(queue, {
-            durable: false
+            durable: true
         });
-        channel.sendToQueue(queue, Buffer.from(msg));
+        channel.sendToQueue(queue, Buffer.from(message));
 
-        console.log(" [x] Sent %s", msg);
+        console.log(" [x] Sent %s", msg.toString());
     });
     setTimeout(function() {
         connection.close();

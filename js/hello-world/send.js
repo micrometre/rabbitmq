@@ -11,7 +11,7 @@ amqp.connect('amqp://localhost', function(error0, connection) {
             throw error1;
         }
 
-        var queue = 'task_queue';
+        var queue = 'hello';
         var msg = 'Hello from Rabbitq! test1';
 
         channel.assertQueue(queue, {
